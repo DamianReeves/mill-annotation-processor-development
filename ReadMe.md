@@ -25,3 +25,34 @@ root/
    ```bash
    ./mill __.compile
    ```
+## Notes
+
+In order to reference the annotation processor module from another mill module, you need to reference the assembly jar of the annotation processor module as seen below:
+
+```scala
+object samples extends Module {
+    object annotations extends JavaModule { 
+    }
+
+    object processors extends KotlinModule {        
+        def kotlinVersion = Versions.kotlin
+    }
+
+    object processor extends  Module {
+        object usage extends JavaModule {
+            def compileModuleDeps = Seq(
+                samples.annotations
+            )
+
+            def compileClasspath = super.compileClasspath() ++ Seq(samples.processors.assembly())
+                
+            def javacOptions = super.javacOptions() ++ Seq(
+                "-processor", "samples.processors.AccountStateProcessor"
+            )
+            
+        }
+    }
+}
+```
+
+You will also need to specify the qualified name of the annotation processor in the `javacOptions` as shown above.
