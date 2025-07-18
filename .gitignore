@@ -1,0 +1,12 @@
+
+## IDE and Build Artifacts
+.idea/
+*.iml
+out/
+target/
+*.class
+.metals/
+.bsp/
+.bloop/
+.scala-build/
+

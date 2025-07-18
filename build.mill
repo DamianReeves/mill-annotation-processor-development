@@ -1,0 +1,33 @@
+//| mill-version: 1.0.0
+package build 
+
+import mill.*, scalalib.*, javalib.*
+import kotlinlib.KotlinModule
+
+object samples extends Module {
+    object annotations extends JavaModule { 
+    }
+
+    object processors extends KotlinModule {        
+        def kotlinVersion = Versions.kotlin
+    }
+
+    object processor extends  Module {
+        object usage extends JavaModule {
+            def compileModuleDeps = Seq(
+                samples.annotations
+            )
+
+            def compileClasspath = super.compileClasspath() ++ Seq(samples.processors.assembly()) //Seq(samples.processors.jar())
+                
+            def javacOptions = super.javacOptions() ++ Seq(
+                "-processor", "samples.processors.AccountStateProcessor"
+            )
+            
+        }
+    }
+}
+
+object Versions {
+    val kotlin = "2.2.0"
+}
